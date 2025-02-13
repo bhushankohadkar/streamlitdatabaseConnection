@@ -10,11 +10,6 @@ def get_connection():
         database=st.secrets["database"],
         username=st.secrets["username"],
         password=st.secrets["password"],
-        query={
-            "driver": "ODBC Driver 18 for SQL Server",
-            "encrypt": "yes",
-            "TrustServerCertificate": "no",
-        },
     )
     return conn
 
