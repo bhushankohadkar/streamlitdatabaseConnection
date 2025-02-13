@@ -1,6 +1,7 @@
 import streamlit as st
 import sqlalchemy as sql
 import pandas as pd
+import pyodbc as odb
 def get_connection():
     conn = st.connection(
         "sql",
@@ -10,6 +11,11 @@ def get_connection():
         database=st.secrets["database"],
         username=st.secrets["username"],
         password=st.secrets["password"],
+        query={
+            "driver": "ODBC Driver 17 for SQL Server",
+            "encrypt": "yes",
+            "TrustServerCertificate": "no",
+        },
     )
     return conn
 
