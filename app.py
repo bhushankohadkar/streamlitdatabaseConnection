@@ -3,7 +3,7 @@ import pandas as pd
 import pyodbc 
 
 
-
+@st.cache_resource
 def init_connection():
     return pyodbc.connect(
         "DRIVER={ODBC Driver 17 for SQL Server};SERVER="
@@ -18,6 +18,7 @@ def init_connection():
 
 conn = init_connection()
 
+@st.cache_data(ttl=600)
 def insert_player(PlayerName, DateOfJoin):
     cursor = conn.cursor()
     
