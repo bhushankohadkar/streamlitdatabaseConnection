@@ -29,7 +29,12 @@ def insert_player(PlayerName, DateOfJoin):
     cursor.execute(query, (PlayerName, DateOfJoin_str))
     
     conn.commit()
-    conn.close()
+    cursor.close()  # Close cursor, but keep the connection open
+
+def fetch_players():
+    query = "SELECT * FROM Registration"
+    df = pd.read_sql(query, conn)  # Use the global connection
+    return df
 
 st.set_page_config(page_title="Register Player", page_icon="📝")
 
@@ -53,7 +58,5 @@ if st.button("Register Player"):
 
 
 if st.button("Show Players"):
-    query = """SELECT * FROM Registration"""
-    df = pd.read_sql(query, conn)
-    conn.commit()
-    st.dataframe(df)
+    df = fetch_players()  # Fetch players from DB
+    st.dataframe(df)  # Display in Streamlit UI
