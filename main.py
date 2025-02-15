@@ -34,7 +34,9 @@ def insert_game_result(match_number, player_id, kills, deaths, score, game_winne
     query = """INSERT INTO MatchResults (MatchNumber, PlayerID, Kills, Deaths, Score, GameWinner, TotalScore, Tokens)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
     cursor.execute(query, (match_number, player_id, kills, deaths, score, game_winner, total_score, tokens))
+    
     conn.commit()
+    cursor.close()
     # conn.close()
 
 # Function to fetch match results
