@@ -41,10 +41,10 @@ def insert_game_result(MatchID, player_id, kills, deaths, score, game_winner, to
 
 # Function to fetch match results
 def get_game_results():
-    query = """SELECT m.MatchNumber, r.PlayerName, m.Kills, m.Deaths, m.Score, m.GameWinner, m.TotalScore, m.Tokens
+    query = """SELECT m.MatchID, r.PlayerName, m.Kills, m.Deaths, m.Score, m.GameWinner, m.TotalScore, m.Tokens
                FROM MatchResults m
                JOIN Registration r ON m.PlayerID = r.ID
-               ORDER BY m.MatchNumber DESC"""
+               ORDER BY m.MatchID DESC"""
     df = pd.read_sql(query, conn)
     # conn.close()
     return df
