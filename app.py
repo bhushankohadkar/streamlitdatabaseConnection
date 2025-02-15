@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import pyodbc 
 
+st.set_page_config(page_title="Register Player", page_icon="📝")
+
 
 @st.cache_resource
 def init_connection():
@@ -36,7 +38,6 @@ def fetch_players():
     df = pd.read_sql(query, conn)  # Use the global connection
     return df
 
-st.set_page_config(page_title="Register Player", page_icon="📝")
 
 st.title("📝 Register New Player")
 
