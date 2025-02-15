@@ -25,7 +25,7 @@ conn = init_connection()
 def get_registered_players():
     query = "SELECT ID, PlayerName FROM Registration ORDER BY PlayerName"
     df = pd.read_sql(query, conn)
-    conn.close()
+    # conn.close()
     return df
 
 # Function to insert game results
@@ -35,7 +35,7 @@ def insert_game_result(match_number, player_id, kills, deaths, score, game_winne
                VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
     cursor.execute(query, (match_number, player_id, kills, deaths, score, game_winner, total_score, tokens))
     conn.commit()
-    conn.close()
+    # conn.close()
 
 # Function to fetch match results
 def get_game_results():
@@ -44,7 +44,7 @@ def get_game_results():
                JOIN Registration r ON m.PlayerID = r.ID
                ORDER BY m.MatchNumber DESC"""
     df = pd.read_sql(query, conn)
-    conn.close()
+    # conn.close()
     return df
 
 
