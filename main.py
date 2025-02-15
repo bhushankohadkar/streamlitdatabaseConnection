@@ -29,11 +29,11 @@ def get_registered_players():
     return df
 
 # Function to insert game results
-def insert_game_result(match_number, player_id, kills, deaths, score, game_winner, total_score, tokens):
+def insert_game_result(MatchID, player_id, kills, deaths, score, game_winner, total_score, tokens):
     cursor = conn.cursor()
-    query = """INSERT INTO MatchResults (MatchNumber, PlayerID, Kills, Deaths, Score, GameWinner, TotalScore, Tokens)
+    query = """INSERT INTO MatchResults (MatchID, PlayerID, Kills, Deaths, Score, GameWinner, TotalScore, Tokens)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
-    cursor.execute(query, (match_number, player_id, kills, deaths, score, game_winner, total_score, tokens))
+    cursor.execute(query, (MatchID, player_id, kills, deaths, score, game_winner, total_score, tokens))
     
     conn.commit()
     cursor.close()
@@ -63,7 +63,7 @@ player_options = {row["PlayerName"]: row["ID"] for _, row in players_df.iterrows
 
 # Form to insert game data
 with st.form("game_result_form"):
-    match_number = st.number_input("Match Number", min_value=1, step=1)
+    MatchID = st.number_input("Match Number", min_value=1, step=1)
     selected_player_name = st.selectbox("Select Player", list(player_options.keys()))  # Display Player Names
     player_id = player_options[selected_player_name]  # Fetch corresponding PlayerID
     kills = st.number_input("Kills", min_value=0)
@@ -75,8 +75,8 @@ with st.form("game_result_form"):
 
     submitted = st.form_submit_button("Add Game Result")
     if submitted:
-        insert_game_result(match_number, player_id, kills, deaths, score, game_winner, total_score, tokens)
-        st.success(f"✅ Game result for {selected_player_name} (Match {match_number}) added!")
+        insert_game_result(MatchID, player_id, kills, deaths, score, game_winner, total_score, tokens)
+        st.success(f"✅ Game result for {selected_player_name} (Match {MatchID}) added!")
 
 # Display game results
 st.subheader("📊 Game Results Table")
