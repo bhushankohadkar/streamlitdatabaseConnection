@@ -1,50 +1,32 @@
 import streamlit as st
-import sqlalchemy as sql
+import pandas as pd
+import pyodbc 
 
-def get_connection():
-    conn = st.connection(
-        "sql",
-        dialect="mssql",
-        driver="pyodbc",
-        host="tcp:bhushankoahadkar.database.windows.net,1433",
-        database="Game",
-        username="bhushankohadkar",
-        password = "Bhushank@11",
-        query={
-            "driver": "ODBC Driver 18 for SQL Server",
-            "encrypt": "yes",
-        },
+def init_connection():
+    return pyodbc.connect(
+        "DRIVER={ODBC Driver 17 for SQL Server};SERVER="
+        + st.secrets["server"]
+        + ";DATABASE="
+        + st.secrets["database"]
+        + ";UID="
+        + st.secrets["username"]
+        + ";PWD="
+        + st.secrets["password"]
     )
-    return conn
 
-
-# PlayerName = st.text_input("Enter Player Name")
-# DateOfJoin = st.date_input("Select Registration Date")
-# if st.button("Register Player"):
-#     with conn.session as session:
-#         insert_query = sql.text("INSERT INTO Registration (PlayerName,DateOfJoin) VALUES (:P,:D);")   
-#         session.execute(insert_query, {"P" : PlayerName, "D" : DateOfJoin})
-#         session.commit()
-#         st.success(f"�� Player '{PlayerName}' registered successfully!")
-#         session.close()
-        # df = session.execute(text("SELECT * FROM Registration")).fetchall()
-        # st.dataframe(df)
-     
-
-
-# if st.button("Register Player"):
-# df = conn.query("select * from Registration")
-# st.dataframe(df)
-
+conn = init_connection()
 
 def insert_player(PlayerName, DateOfJoin):
-    conn = get_connection()
-    with conn.session as session:
-        insert_query = sql.text("INSERT INTO Registration (PlayerName,DateOfJoin) VALUES (:P,:D);")   
-        session.execute(insert_query, {"P" : PlayerName, "D" : DateOfJoin})
-        session.commit()
-        session.close()
+    cursor = conn.cursor()
     
+    # Convert DateOfJoin to string (YYYY-MM-DD) for SQL Server
+    DateOfJoin_str = DateOfJoin.strftime('%Y-%m-%d')
+    
+    query = "INSERT INTO Registration (PlayerName, DateOfJoin) VALUES (?, ?)"
+    cursor.execute(query, (PlayerName, DateOfJoin_str))
+    
+    conn.commit()
+    conn.close()
 
 st.set_page_config(page_title="Register Player", page_icon="📝")
 
@@ -56,6 +38,7 @@ PlayerName = st.text_input("Enter Player Name")
 # Manual Date Picker (Calendar)
 DateOfJoin = st.date_input("Select Registration Date")  # User must choose a date
 
+
 if st.button("Register Player"):
     # st.text(DateOfJoin)
     if PlayerName and DateOfJoin:
@@ -65,8 +48,8 @@ if st.button("Register Player"):
         pass
         st.warning("⚠️ Please enter a player name and select a registration date.")
 
-if st.button("show Player"):
-    conn = get_connection()
-    with conn.session as session:
-        df = session.execute(sql.text("SELECT * FROM Registration")).fetchall()
-        st.dataframe(df)
+
+if st.button("Show Players"):
+    query = """SELECT * FROM Registration"""
+    df = pd.read_sql(query, conn)
+    conn.close()
