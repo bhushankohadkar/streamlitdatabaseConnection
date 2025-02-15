@@ -55,5 +55,5 @@ if st.button("Register Player"):
 if st.button("Show Players"):
     query = """SELECT * FROM Registration"""
     df = pd.read_sql(query, conn)
-    conn.close()
+    conn.commit()
     st.dataframe(df)
