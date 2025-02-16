@@ -5,7 +5,7 @@ import pyodbc
 
 st.set_page_config(page_title="Game Management", page_icon="🎮")
 
-@st.cache_resource
+# @st.cache_resource
 def init_connection():
     return pyodbc.connect(
         "DRIVER={ODBC Driver 17 for SQL Server};SERVER="
