@@ -7,15 +7,25 @@ st.set_page_config(page_title="Game Management", page_icon="🎮")
 
 # @st.cache_resource
 def init_connection():
+    # return pyodbc.connect(
+    #     "DRIVER={ODBC Driver 17 for SQL Server};SERVER="
+    #     + st.secrets["server"]
+    #     + ";DATABASE="
+    #     + st.secrets["database"]
+    #     + ";UID="
+    #     + st.secrets["username"]
+    #     + ";PWD="
+    #     + st.secrets["password"]
+    # )
     return pyodbc.connect(
-        "DRIVER={ODBC Driver 17 for SQL Server};SERVER="
-        + st.secrets["server"]
-        + ";DATABASE="
-        + st.secrets["database"]
-        + ";UID="
-        + st.secrets["username"]
-        + ";PWD="
-        + st.secrets["password"]
+        "DRIVER={ODBC Driver 17 for SQL Server};"
+        "SERVER=tcp:bhushankoahadkar.database.windows.net,1433;"
+        "DATABASE=Game;"
+        "UID=bhushankohadkar;"
+        "PWD=Bhushank@11;"
+        "Encrypt=yes;"
+        "TrustServerCertificate=no;"
+        "Connection Timeout=30;"
     )
 
 conn = init_connection()
@@ -29,11 +39,11 @@ def get_registered_players():
     return df
 
 # Function to insert game results
-def insert_game_result(MatchID, player_id, kills, deaths, score, game_winner, total_score, tokens):
+def insert_game_result(MatchID, player_id, PlayerName, kills, deaths, score, game_winner, total_score, tokens):
     cursor = conn.cursor()
-    query = """INSERT INTO MatchResults (MatchID, PlayerID, Kills, Deaths, Score, GameWinner, TotalScore, Tokens)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
-    cursor.execute(query, (MatchID, player_id, kills, deaths, score, game_winner, total_score, tokens))
+    query = """INSERT INTO MatchDetails (MatchID, PlayerID, PlayerName, Kills, Deaths, Score, GameWinner, TotalScore, Tokens)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+    cursor.execute(query, (MatchID, player_id, PlayerName, kills, deaths, score, game_winner, total_score, tokens))
     
     conn.commit()
     cursor.close()
@@ -42,7 +52,7 @@ def insert_game_result(MatchID, player_id, kills, deaths, score, game_winner, to
 # Function to fetch match results
 def get_game_results():
     query = """SELECT m.MatchID, r.PlayerName, m.Kills, m.Deaths, m.Score, m.GameWinner, m.TotalScore, m.Tokens
-               FROM MatchResults m
+               FROM MatchDetails m
                JOIN Registration r ON m.PlayerID = r.ID
                ORDER BY m.MatchID DESC"""
     df = pd.read_sql(query, conn)
@@ -64,8 +74,8 @@ player_options = {row["PlayerName"]: row["ID"] for _, row in players_df.iterrows
 # Form to insert game data
 with st.form("game_result_form"):
     MatchID = st.number_input("Match Number", min_value=1, step=1)
-    selected_player_name = st.selectbox("Select Player", list(player_options.keys()))  # Display Player Names
-    player_id = player_options[selected_player_name]  # Fetch corresponding PlayerID
+    PlayerName = st.selectbox("Select Player", list(player_options.keys()))  # Display Player Names
+    player_id = player_options[PlayerName]  # Fetch corresponding PlayerID
     kills = st.number_input("Kills", min_value=0)
     deaths = st.number_input("Deaths", min_value=0)
     score = kills - deaths  # Auto-calculate score
@@ -75,8 +85,8 @@ with st.form("game_result_form"):
 
     submitted = st.form_submit_button("Add Game Result")
     if submitted:
-        insert_game_result(MatchID, player_id, kills, deaths, score, game_winner, total_score, tokens)
-        st.success(f"✅ Game result for {selected_player_name} (Match {MatchID}) added!")
+        insert_game_result(MatchID, player_id, PlayerName, kills, deaths, score, game_winner, total_score, tokens)
+        st.success(f"✅ Game result for {PlayerName} (Match {MatchID}) added!")
 
 # Display game results
 st.subheader("📊 Game Results Table")

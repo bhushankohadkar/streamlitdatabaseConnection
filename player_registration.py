@@ -7,16 +7,28 @@ st.set_page_config(page_title="Register Player", page_icon="📝")
 
 # @st.cache_resource
 def init_connection():
+    # return pyodbc.connect(
+    #     "DRIVER={ODBC Driver 17 for SQL Server};SERVER="
+    #     + st.secrets["server"]
+    #     + ";DATABASE="
+    #     + st.secrets["database"]
+    #     + ";UID="
+    #     + st.secrets["username"]
+    #     + ";PWD="
+    #     + st.secrets["password"]
+    # )
+
     return pyodbc.connect(
-        "DRIVER={ODBC Driver 17 for SQL Server};SERVER="
-        + st.secrets["server"]
-        + ";DATABASE="
-        + st.secrets["database"]
-        + ";UID="
-        + st.secrets["username"]
-        + ";PWD="
-        + st.secrets["password"]
+        "DRIVER={ODBC Driver 17 for SQL Server};"
+        "SERVER=tcp:bhushankoahadkar.database.windows.net,1433;"
+        "DATABASE=Game;"
+        "UID=bhushankohadkar;"
+        "PWD=Bhushank@11;"
+        "Encrypt=yes;"
+        "TrustServerCertificate=no;"
+        "Connection Timeout=30;"
     )
+
 
 conn = init_connection()
 
