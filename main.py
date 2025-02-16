@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import pyodbc
+import datetime 
 
 
 st.set_page_config(page_title="Game Management", page_icon="🎮")
@@ -70,6 +71,22 @@ if players_df.empty:
 
 # Dropdown: Select Player
 player_options = {row["PlayerName"]: row["ID"] for _, row in players_df.iterrows()}  # Dictionary {PlayerName: PlayerID}
+
+#match master
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    MatchID = st.number_input("Match Number", min_value=1, step=1)
+with col2:
+    MatchDate = st.date_input("Select Match Date")
+with col3:
+    st.selectbox(
+        "Select the map",
+        ("Outpost","Catacombs","Sub division","Undermine","Cliff hanger","Overseer","Prymid","Snowblind",
+        "Hightower","No Escape","Bottleneck","So long","Lunarcy","Suspension","Crossfire","Icebox"),
+    )
+with col4:
+    TimeDuration = st.time_input("Select Time Duration", datetime.time(4, 0))
+
 
 # Form to insert game data
 with st.form("game_result_form"):
